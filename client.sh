@@ -33,7 +33,7 @@ init_client
 
 while :;
 do
-	set_request $FIFOFILE_ANSWER
+	set_request
 	get_answer
 done
 
