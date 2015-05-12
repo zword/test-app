@@ -29,18 +29,11 @@ LedCmdFactory::create(const std::string &cmd)
 		cmd_type = cmd.substr(cmd_index);
 	}
 
-//std::cout<<"cmd_index = "<<cmd_index<<" space_index = "<<space_index<<"arg  ["<<arg<<"]"<<std::endl;
-
-//std::cout<<"Type ["<<cmd_type<<"]"<<" cmd_setter ["<<cmd_setter<<"]"<<std::endl;
-
 	if ( !cmd_type.compare("state") ) {
-		//led_cmd = LedStateCmd::instance();
 		led_cmd = std::unique_ptr<LedStateCmd>(new LedStateCmd);
 	} else if ( !cmd_type.compare("color") ) {
-		//led_cmd = LedColorCmd::instance();
 		led_cmd = std::unique_ptr<LedColorCmd>(new LedColorCmd);
 	} else if ( !cmd_type.compare("rate") ) {
-		//led_cmd = LedRateCmd::instance();
 		led_cmd = std::unique_ptr<LedRateCmd>(new LedRateCmd);
 	} else
 		return nullptr;
@@ -55,16 +48,11 @@ LedCmd::setup(bool type, const std::string &_arg)
 {
 	current_cmd_type = type;
 	arg = _arg;
-
-//std::cout<<"setup ["<<current_cmd_type<<"]"<<std::endl;
-
 }
 
 std::string
 LedCmd::doCmd()
 {
-//std::cout<<"doCmd ["<<current_cmd_type<<"]"<<std::endl;
-
 	if ( current_cmd_type == true )
 		return setVal(arg);
 	else
@@ -75,7 +63,7 @@ std::string
 LedCmd::setVal(const std::string &arg)
 {
 	if ( check_arg(arg) == false ) {
-		//std::cout<<"Check failed"<<std::endl;
+		std::cout<<"Check \""<<arg<<"\" failed"<<std::endl;
 		return failed_msg;
 	}
 

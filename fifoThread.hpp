@@ -22,8 +22,6 @@ public:
 	static const string exit_msg;
 	static const string err_msg;
 
-	void sigIntFunc(int, siginfo_t*, void*);
-
 private:
 	void run();
 	string fifo;

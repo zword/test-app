@@ -50,12 +50,6 @@ void sigIntFunc(int, siginfo_t*, void*)
 		cout<<"write("<<FifoThread::exit_msg<<") failed: "<<strerror(errno)<<endl;
 		return;
 	}
-#if 0
-	if ( ::write(pipe_fd, "\n", 1) == -1 ) {
-		cout<<"write("<<FifoThread::exit_msg<<") failed: "<<strerror(errno)<<endl;
-		return;
-	}
-#endif
 }
 
 int
@@ -70,7 +64,7 @@ main()
 	while ( 1 ) {
 		string cmd = fifo_thr.getMsg();
 
-cout << "Request received ["<<cmd<<"]"<<endl;
+//cout << "Request received ["<<cmd<<"]"<<endl;
 
 		if ( !cmd.compare(FifoThread::err_msg) )
 			continue;
