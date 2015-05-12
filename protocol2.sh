@@ -137,6 +137,7 @@ do
 			if [[ $c = `echo -e '\n'` ]]; then
 				# Добавляем '"' в начало
 				req=\"${req}
+				echo -n -e "\n"
 				break
 			fi
 
