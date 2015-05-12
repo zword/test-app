@@ -9,12 +9,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <thread>
-#include <condition_variable>
-#include <queue>
-#include <mutex>
-
-#include "sigHandler.hpp"
 #include "fifoThread.hpp"
 #include "ledCmd.hpp"
 
@@ -22,44 +16,54 @@ using namespace std;
 
 //TODO: сделать один экземпляр приложения: http://stackoverflow.com/questions/5339200/how-to-create-a-single-instance-application-in-c-or-c
 
-string g_rcv_fifo_name("/tmp/rcv_fifo");
+const string g_fifofile("/tmp/fifo_test");
 
-queue<string> g_commands;
-condition_variable g_queuecheck;
-mutex g_cmdQueueMutex;
+int
+setSigIntHandler(void (*hndlr)(int, siginfo_t *, void *))
+{
+	struct sigaction act;
+ 
+	::memset(&act, '\0', sizeof(act));
 
-std::thread::id main_thread_id = std::this_thread::get_id();
-string g_fifofile;
+	act.sa_sigaction = hndlr;
+	act.sa_flags = SA_SIGINFO | SA_RESETHAND;
 
-string g_finish_msg("STOP_SERVER");
+	if ( ::sigaction(SIGINT, &act, NULL) == -1 ) {
+		std::cout<<"sigaction() failed: "<<strerror(errno)<<std::endl;
+		return 1;
+	}
 
-void SigIntFunc(int , siginfo_t*, void*)
+	return 0;
+}
+
+void sigIntFunc(int, siginfo_t*, void*)
 {
 	cout << "hi" << endl;
 	int pipe_fd;
 
-	if ( (pipe_fd = open(g_fifofile.data(), O_WRONLY)) == -1 ) {
+	if ( (pipe_fd = ::open(g_fifofile.data(), O_WRONLY)) == -1 ) {
 		cout<<"open("<<g_fifofile.data()<<") failed: "<<strerror(errno)<<endl;
 		return;
 	}
 
-	if ( write(pipe_fd, g_finish_msg.data(), g_finish_msg.length()) == -1 ) {
-		cout<<"write(FINISH) failed: "<<strerror(errno)<<endl;
-		close(pipe_fd);
+	if ( ::write(pipe_fd, std::string(FifoThread::exit_msg).append("\n").c_str(), FifoThread::exit_msg.length() + 1) == -1 ) {
+		cout<<"write("<<FifoThread::exit_msg<<") failed: "<<strerror(errno)<<endl;
+		return;
 	}
-
-//	remove(g_fifofile.data());
+#if 0
+	if ( ::write(pipe_fd, "\n", 1) == -1 ) {
+		cout<<"write("<<FifoThread::exit_msg<<") failed: "<<strerror(errno)<<endl;
+		return;
+	}
+#endif
 }
 
 int
-main(int argc, char *argv[])
+main()
 {
-	FifoThread fifo_thr(argv[1]);
+	FifoThread fifo_thr(g_fifofile);
 
-	SigHandler s_hdlr;
-
-	//auto f = std::bind(&FifoThread::sigIntFunc, fifo_thr);
-	//s_hdlr.setSigIntHandler(std::bind(&FifoThread::sigIntFunc, fifo_thr, _1));
+	setSigIntHandler(sigIntFunc);
 
 	LedCmdFactory factory;
 
@@ -83,7 +87,7 @@ cout << "Request received ["<<cmd<<"]"<<endl;
 		// Обработка запроса "оборудованием"
 		string reply = led_cmd->doCmd();
 
-		sleep(5);
+		//sleep(5);
 
 		fifo_thr.sendReply(reply);
 	}
