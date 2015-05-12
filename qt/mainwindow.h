@@ -24,7 +24,6 @@ public:
     static QImage blue_image;
     static QImage green_image;
     static QImage red_image;
-    static QImage grey_image;
     static QImage led_on_image;
 
 public slots:

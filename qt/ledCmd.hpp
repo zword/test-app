@@ -10,7 +10,6 @@ class LedCmd;
 
 class LedCmdFactory {
 public:
-//	virtual ~LedCmdFactory();
 	std::unique_ptr<LedCmd> create(const std::string &cmd);
 
 private:
@@ -19,7 +18,6 @@ private:
 class LedCmd {
 public:
     virtual ~LedCmd() {}
-	//static LedCmd *instance();
 
     std::string doCmd();
 	std::string getVal();
@@ -35,7 +33,6 @@ private:
 	virtual bool check_arg(const std::string &arg) const = 0;
 	virtual bool set(const std::string &arg) = 0;
 
-	//static LedCmd *_instance;
 	bool current_cmd_type;
 	std::string arg;
 };
@@ -50,7 +47,6 @@ private:
 
 class LedColorCmd: public LedCmd {
 public:
-	~LedColorCmd() { std::cout<<"~LedColorCmd()"<<std::endl; }
 
 private:
 	virtual std::string get();

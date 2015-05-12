@@ -23,7 +23,6 @@ using namespace std;
 QImage MainWindow::blue_image = QImage("blue.png");
 QImage MainWindow::green_image = QImage("green.png");
 QImage MainWindow::red_image = QImage("red.png");
-QImage MainWindow::grey_image = QImage("grey.png");
 
 QImage MainWindow::led_on_image = blue_image;
 
@@ -49,7 +48,6 @@ setSigIntHandler(void (*hndlr)(int, siginfo_t *, void *))
 
 void sigIntFunc(int, siginfo_t*, void*)
 {
-    cout << "hi" << endl;
     int pipe_fd;
 
     if ( (pipe_fd = ::open(g_fifofile.data(), O_WRONLY)) == -1 ) {
@@ -65,8 +63,6 @@ void sigIntFunc(int, siginfo_t*, void*)
 
 void main2()
 {
-    std::cout <<"Hi"<<std::endl;
-
     FifoThread fifo_thr(g_fifofile);
 
     setSigIntHandler(sigIntFunc);
@@ -76,7 +72,7 @@ void main2()
     while ( 1 ) {
         string cmd = fifo_thr.getMsg();
 
-cout << "Request received ["<<cmd<<"]"<<endl;
+//cout << "Request received ["<<cmd<<"]"<<endl;
 
         if ( !cmd.compare(FifoThread::err_msg) )
             continue;
@@ -137,7 +133,7 @@ MainWindow::update()
         ui->label->setPixmap(QPixmap::fromImage(image));
         timer->start(timeout);
     } else {
-        ui->label->setPixmap(QPixmap::fromImage(grey_image));
+        ui->label->setPixmap(QPixmap());
         timer->start(100);
     }
 }
@@ -170,6 +166,7 @@ MainWindow::setImage(const QImage &im)
 void
 MainWindow::setState(bool _state)
 {
+    // on
     if ( (state == false) && (_state == true) ) {
         state = true;
         ui->label->setPixmap(QPixmap::fromImage(image));
@@ -177,9 +174,10 @@ MainWindow::setState(bool _state)
         statusBar()->showMessage("on");
     }
 
+    // off
     if ( (state == true) && (_state == false) ) {
         state = _state;
-        ui->label->setPixmap(QPixmap::fromImage(grey_image));
+        ui->label->setPixmap(QPixmap());
         image = led_on_image;
         timer->stop();
         timeout = 0;

@@ -27,11 +27,9 @@ LedDevice::instance()
 bool
 LedDevice::cmdSimulation()
 {
-	int r = rand() % 2;
+    int r = rand()%3;
 
-std::cout<<"r = "<<r<<std::endl;
-
-	if ( !r )
+    if ( !r )
 		return false;
 
 	return true;
@@ -40,9 +38,6 @@ std::cout<<"r = "<<r<<std::endl;
 bool
 LedDevice::setState(const std::string &_state)
 {
-	if ( cmdSimulation() )
-		return false;
-
 	state = _state;
 
     state.compare("on") ? w->setState(false) : w->setState(true);
@@ -56,7 +51,7 @@ LedDevice::setColor(const std::string &_color)
     if ( state.compare("off") == 0 )
         return false;
 
-    if ( cmdSimulation() )
+    if ( !cmdSimulation() )
 		return false;
 
 	color = _color;

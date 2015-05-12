@@ -27,7 +27,7 @@ FifoThread::~FifoThread()
 void
 FifoThread::run()
 {
-	cout<<"Run: fifo = ["<<fifo<<"]"<<endl;
+//	cout<<"Run: fifo = ["<<fifo<<"]"<<endl;
 
 #if 0
 	ifstream f;
@@ -50,7 +50,7 @@ FifoThread::run()
 
 	f.close();
 #else
-	int pipe_fd;
+    int pipe_fd = -1;
 	ssize_t read_bytes;
 	char cmd[100];
 
@@ -80,7 +80,7 @@ FifoThread::run()
 
 			reopen = 0;
 		}
-cout << "OK. Reading"<<endl;
+//cout << "OK. Reading"<<endl;
 
 		if ( (read_bytes = ::read(pipe_fd, (void *)cmd, 100)) == -1 ) {
 			cout<<"read("<<fifo.c_str()<<") failed: "<<::strerror(errno)<<endl;
@@ -96,7 +96,7 @@ cout << "OK. Reading"<<endl;
 
 		// Убираем перевод строки
 		cmd[read_bytes - 1] = '\0';
-		cout<<"Read cmd from pipe ["<<cmd<<"], "<<read_bytes<<" bytes"<<endl;
+//		cout<<"Read cmd from pipe ["<<cmd<<"], "<<read_bytes<<" bytes"<<endl;
 
 		unique_lock<mutex> lock(msg_queue_mutex);
 		msg.push(cmd);
@@ -155,7 +155,7 @@ void
 FifoThread::sendReply(const string &reply) const
 {
 	int fd_reply;
-	if ( (fd_reply = open(fifo_reply.c_str(), O_WRONLY)) == -1 ) {
+    if ( (fd_reply = ::open(fifo_reply.c_str(), O_WRONLY)) == -1 ) {
 		if ( errno != ENOENT )	// Клиент завершился и удалил фифо
 			cout<<"open("<<fifo_reply.c_str()<<") failed: "<<strerror(errno)<<endl;
 		return;
@@ -165,11 +165,11 @@ FifoThread::sendReply(const string &reply) const
 	_reply.append(reply).append("\\n\"");
 
 	cout << "Sending reply: [" << _reply << "]" << endl;
-	if ( write(fd_reply, _reply.c_str(), _reply.size()) == -1 ) {
+    if ( ::write(fd_reply, _reply.c_str(), _reply.size()) == -1 ) {
 		cout<<"write("<<fifo_reply.c_str()<<") failed: "<<strerror(errno)<<endl;
 		//close(fd_reply);
 	}
 
 	// Посылаем eof
-	close(fd_reply);
+    ::close(fd_reply);
 }
