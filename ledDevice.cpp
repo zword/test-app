@@ -7,7 +7,7 @@ LedDevice *LedDevice::_instance = nullptr;
 
 LedDevice::LedDevice()
 {
-	color = "green";
+	color = "blue";
 	state = "off";
 	rate = "0";
 }

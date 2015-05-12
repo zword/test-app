@@ -22,7 +22,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     fifoThread.hpp \
     ledCmd.hpp \
-    ledCommand.hpp \
     ledDevice.hpp
 
 FORMS    += mainwindow.ui

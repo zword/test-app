@@ -29,27 +29,6 @@ FifoThread::run()
 {
 //	cout<<"Run: fifo = ["<<fifo<<"]"<<endl;
 
-#if 0
-	ifstream f;
-
-	f.open(pipefile);
-	if (!f.is_open()) {
-		cout<<"open("<<pipefile<<") failed: "<<strerror(errno)<<endl;
-		return;
-	}
-
-	//while ( !f.bad() ) {
-	while ( f.read(cmd, 100) ) {
-		//getline(f, cmd); 
-		cout << "line [" << cmd << "]" << endl;
-		lock_guard<mutex> lock(g_cmdQueueMutex);
-	}
-
-	if ( f.eof() )
-		cout << "EOF" << endl;
-
-	f.close();
-#else
     int pipe_fd = -1;
 	ssize_t read_bytes;
 	char cmd[100];
@@ -89,7 +68,7 @@ FifoThread::run()
 
 		// Все клиенты закончили работу
 		if ( read_bytes == 0 ) {
-			cout<<"All clients finished their jobs"<<endl;
+            //cout<<"All clients finished their jobs"<<endl;
 			reopen = 1;
 			continue;
 		}
@@ -112,7 +91,6 @@ FifoThread::run()
 	::close(pipe_fd);
 	if ( ::remove(fifo.c_str()) == -1 )
 		cout<<"remove("<<fifo.c_str()<<") failed: "<<strerror(errno)<<endl;
-#endif
 }
 
 /**
@@ -137,7 +115,7 @@ FifoThread::getMsg()
 	msg.pop();
 
 	//cout << "Request received: " << req << endl;
-	cout << "Queue size = " << msg.size() << endl;
+    //cout << "Queue size = " << msg.size() << endl;
 
 	size_t index = req.find_first_of(' ');
 	if ( index == string::npos ) {

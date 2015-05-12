@@ -14,10 +14,11 @@
 
 using namespace std;
 
-//TODO: сделать один экземпляр приложения: http://stackoverflow.com/questions/5339200/how-to-create-a-single-instance-application-in-c-or-c
-
 const string g_fifofile("/tmp/fifo_test");
 
+/**
+ * Регистратор обработчика Ctrl+C
+ */
 int
 setSigIntHandler(void (*hndlr)(int, siginfo_t *, void *))
 {
@@ -36,9 +37,13 @@ setSigIntHandler(void (*hndlr)(int, siginfo_t *, void *))
 	return 0;
 }
 
-void sigIntFunc(int, siginfo_t*, void*)
+/**
+ * Обработчик Ctrl+C
+ * Посылает в канал сообщение завершения работы
+ */
+void
+sigIntFunc(int, siginfo_t*, void*)
 {
-	cout << "hi" << endl;
 	int pipe_fd;
 
 	if ( (pipe_fd = ::open(g_fifofile.data(), O_WRONLY)) == -1 ) {
@@ -52,6 +57,9 @@ void sigIntFunc(int, siginfo_t*, void*)
 	}
 }
 
+/**
+ * Основной цикл теста
+ */
 int
 main()
 {
@@ -81,6 +89,7 @@ main()
 		// Обработка запроса "оборудованием"
 		string reply = led_cmd->doCmd();
 
+		// Тестирование работы нескольких клиентов
 		//sleep(5);
 
 		fifo_thr.sendReply(reply);

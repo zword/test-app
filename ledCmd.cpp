@@ -4,7 +4,7 @@
 #include "ledDevice.hpp"
 
 const std::string LedCmd::failed_msg = "FAILED";
-const std::string LedCmd::success_msg = "OK ";
+const std::string LedCmd::success_msg = "OK";
 
 /**
  *	Команда в формате "_action_-led-_cmd_ _arg_"
@@ -82,7 +82,7 @@ LedCmd::getVal()
 std::string
 LedStateCmd::get()
 {
-	return success_msg + LedDevice::instance()->getState();
+	return success_msg + " " + LedDevice::instance()->getState();
 }
 
 bool
@@ -106,7 +106,10 @@ LedStateCmd::check_arg(const std::string &arg) const
 std::string
 LedColorCmd::get()
 {
-	return success_msg + LedDevice::instance()->getColor();
+	if ( LedDevice::instance()->getState().compare("off") == 0 )
+		return failed_msg;
+
+	return success_msg + " " + LedDevice::instance()->getColor();
 }
 
 bool
@@ -133,7 +136,10 @@ LedColorCmd::check_arg(const std::string &arg) const
 std::string
 LedRateCmd::get()
 {
-	return success_msg + LedDevice::instance()->getRate();
+	if ( LedDevice::instance()->getState().compare("off") == 0 )
+		return failed_msg;
+
+	return success_msg + " " + LedDevice::instance()->getRate();
 }
 
 bool

@@ -3,7 +3,9 @@
 
 #include <string>
 
-// Эмуляция устройства
+/**
+ * Эмуляция LED устройства
+ */
 class LedDevice {
 public:
 	LedDevice();
@@ -24,6 +26,7 @@ private:
 	std::string state;
 	std::string rate;
 
+	// Эмуляция ошибки при установки значения состояния устройства
 	bool cmdSimulation();
 };
 

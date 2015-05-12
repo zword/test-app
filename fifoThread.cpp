@@ -68,7 +68,7 @@ FifoThread::run()
 
 		// Все клиенты закончили работу
 		if ( read_bytes == 0 ) {
-			cout<<"All clients finished their jobs"<<endl;
+			//cout<<"All clients finished their jobs"<<endl;
 			reopen = 1;
 			continue;
 		}
@@ -115,7 +115,7 @@ FifoThread::getMsg()
 	msg.pop();
 
 	//cout << "Request received: " << req << endl;
-	cout << "Queue size = " << msg.size() << endl;
+	//cout << "Queue size = " << msg.size() << endl;
 
 	size_t index = req.find_first_of(' ');
 	if ( index == string::npos ) {

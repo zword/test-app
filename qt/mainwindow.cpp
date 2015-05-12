@@ -28,6 +28,9 @@ QImage MainWindow::led_on_image = blue_image;
 
 const string g_fifofile("/tmp/fifo_test");
 
+/**
+ * Регистратор обработчика Ctrl+C
+ */
 int
 setSigIntHandler(void (*hndlr)(int, siginfo_t *, void *))
 {
@@ -46,6 +49,10 @@ setSigIntHandler(void (*hndlr)(int, siginfo_t *, void *))
     return 0;
 }
 
+/**
+ * Обработчик Ctrl+C
+ * Посылает в канал сообщение завершения работы
+ */
 void sigIntFunc(int, siginfo_t*, void*)
 {
     int pipe_fd;
@@ -61,6 +68,9 @@ void sigIntFunc(int, siginfo_t*, void*)
     }
 }
 
+/**
+ * @brief Main cycle
+ */
 void main2()
 {
     FifoThread fifo_thr(g_fifofile);
